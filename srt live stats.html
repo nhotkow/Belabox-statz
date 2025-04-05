@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Belabox Live Stats</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .stat {
+      font-size: 18px;
+      margin: 8px 0;
+    }
+    .container {
+      background: #161b22;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Belabox Live Stats</h1>
+    <div id="stats">Loading...</div>
+  </div>
+
+  <script>
+    const STATS_URL = 'https://stats.srt.belabox.net/SGtXsenYZ4PXSMhTNNtNy0CRAUx4Af';
+
+    async function fetchStats() {
+      try {
+        const res = await fetch(STATS_URL);
+        const data = await res.json();
+
+        const statsEl = document.getElementById("stats");
+        statsEl.innerHTML = `
+          <div class="stat">Bitrate: ${data.output?.bitrate_kbps || 'N/A'} kbps</div>
+          <div class="stat">Resolution: ${data.output?.resolution || 'N/A'}</div>
+          <div class="stat">FPS: ${data.output?.fps || 'N/A'}</div>
+          <div class="stat">Latency: ${data.output?.latency || 'N/A'} ms</div>
+          <div class="stat">RTT: ${data.output?.rtt || 'N/A'} ms</div>
+          <div class="stat">Packet Loss: ${data.output?.packet_loss_percent || 0}%</div>
+          <div class="stat">Dropped Frames: ${data.output?.dropped_frames || 0}</div>
+          <div class="stat">Connected: ${data.output?.connected ? 'Yes' : 'No'}</div>
+          <div class="stat">Time: ${new Date().toLocaleTimeString()}</div>
+        `;
+      } catch (err) {
+        document.getElementById("stats").innerHTML = `<div class="stat">Error loading stats</div>`;
+      }
+    }
+
+    fetchStats();
+    setInterval(fetchStats, 2000); // Update every 2 seconds
+  </script>
+</body>
+</html>
